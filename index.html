@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>คลังเจ๋งแจ๋ว | เงินทุนธุรกิจ • บัญชีหลายเครื่อง</title>
+<style>
+:root{
+  --red:#8d1020; --red2:#c51f32; --deep:#24070b; --gold:#f4c95d;
+  --cream:#fff2c7; --bg:#120507; --panel:#21090d; --line:#6f1c25;
+  --green:#32c47c; --danger:#ef5364; --muted:#d2aeb2;
+}
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,-apple-system,"Noto Sans Thai",sans-serif;background:
+radial-gradient(circle at 20% 0%,#5d101a 0,#180608 35%,#0d0305 100%);color:#fff8e4}
+button,input,select{font:inherit} button{cursor:pointer}
+.app{display:grid;grid-template-columns:250px 1fr;min-height:100vh}
+.sidebar{background:linear-gradient(180deg,#28080d,#120406);border-right:1px solid #7d1c27;padding:18px;position:sticky;top:0;height:100vh}
+.brand{padding:10px 8px 22px;border-bottom:1px solid #65202a;margin-bottom:18px}
+.brand h1{margin:0;color:var(--gold);font-size:28px}.brand p{margin:5px 0 0;color:#e9c9a0;font-size:12px}
+.nav{display:grid;gap:8px}.nav button{border:1px solid transparent;background:transparent;color:#f9e8d0;padding:13px;border-radius:10px;text-align:left}
+.nav button:hover,.nav button.active{background:linear-gradient(90deg,#a41427,#5c0d17);border-color:#c42a3b}
+.main{min-width:0}.top{padding:22px 28px 10px;display:flex;justify-content:space-between;align-items:center;gap:20px}
+.top h2{margin:0;font-size:25px}.top p{margin:4px 0;color:var(--muted);font-size:13px}
+.user{border:1px solid #6d1d27;background:#1c070b;border-radius:14px;padding:9px 14px;color:#ffe8bd}
+.content{padding:14px 28px 35px;max-width:1450px;margin:auto}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.card{background:linear-gradient(145deg,#3a0d13,#1d070a);border:1px solid #8e2633;border-radius:16px;padding:18px;box-shadow:0 10px 35px #0006}
+.card small{color:#dfbfc0}.value{font-size:28px;font-weight:800;margin:7px 0}.gold{color:var(--gold)}.green{color:var(--green)}.red{color:#ff6573}
+.grid{display:grid;grid-template-columns:1.7fr 1fr;gap:16px;margin-top:16px}.panel{background:#190609cc;border:1px solid #6f1c25;border-radius:16px;padding:18px}.panel h3{margin:0 0 15px}
+.chart{height:220px;display:flex;align-items:end;gap:12px;border-left:1px solid #60202a;border-bottom:1px solid #60202a;padding:12px 10px 0}
+.barwrap{height:100%;flex:1;display:flex;align-items:end;gap:3px}.bar{flex:1;border-radius:5px 5px 0 0;min-height:3px}.income{background:#29bf78}.expense{background:#ef5364}.profit{background:var(--gold)}
+.legend{display:flex;gap:16px;color:#d7bdbd;font-size:12px;margin-top:10px}
+.quick{display:grid;grid-template-columns:1fr 1fr;gap:10px}.quick button{padding:14px;border-radius:11px;border:1px solid #8f2632;background:#5c0d17;color:#fff}.quick button:nth-child(2){background:#8b6413}.quick button:nth-child(3){background:#4e1720}.quick button:nth-child(4){background:#241018}
+.tablepanel{margin-top:16px}.toolbar{display:flex;gap:8px;justify-content:space-between;flex-wrap:wrap;margin-bottom:12px}.toolbar input,.toolbar select,.form input,.form select{background:#120407;border:1px solid #71303a;color:white;padding:10px;border-radius:9px;outline:none}.toolbar input{min-width:240px}
+table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:12px 8px;border-bottom:1px solid #4c1921;text-align:left}th{color:#e5bd69;background:#300a10}td{color:#f5e8d8}.badge{padding:5px 8px;border-radius:20px;font-size:11px}.sold{background:#104e32;color:#8dffc2}.stock{background:#64101c;color:#ffadb5}
+.actions button{border:0;background:none;color:#f4c95d;margin-right:5px}.empty{text-align:center;padding:28px;color:#a98d90}
+.modal{position:fixed;inset:0;background:#000a;display:none;align-items:center;justify-content:center;padding:18px;z-index:60}.modal.show{display:flex}.dialog{width:min(560px,100%);background:#22080d;border:1px solid #a52b39;border-radius:18px;padding:22px;box-shadow:0 20px 80px #000}
+.form{display:grid;gap:12px}.form label{font-size:13px;color:#e6caca}.form input,.form select{width:100%;margin-top:5px}.formrow{display:grid;grid-template-columns:1fr 1fr;gap:12px}.dialog-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}.primary{background:#c31d32!important;color:white!important;border:0!important;padding:11px 18px;border-radius:9px}.secondary{background:#351016!important;color:#f5dfbf!important;border:1px solid #74303a!important;padding:11px 18px;border-radius:9px}
+.toast{position:fixed;right:20px;bottom:20px;background:#291015;border:1px solid #9b3040;padding:12px 16px;border-radius:10px;display:none;z-index:10}.toast.show{display:block}
+@media(max-width:1150px){.cards{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:950px){.app{grid-template-columns:1fr}.sidebar{height:auto;position:static}.nav{grid-template-columns:repeat(4,1fr)}.nav button{font-size:11px}.grid{grid-template-columns:1fr}}
+@media(max-width:600px){.top,.content{padding-left:14px;padding-right:14px}.nav{grid-template-columns:repeat(2,1fr)}.cards{grid-template-columns:1fr}.formrow{grid-template-columns:1fr}.tablepanel{overflow:auto}table{min-width:800px}.quick{grid-template-columns:1fr}}
+
+.category-chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:7px}
+.category-chip{border:1px solid #71303a;background:#160508;color:#e8d3c4;padding:8px 12px;border-radius:999px}
+.category-chip.selected{background:#a91529;border-color:#f4c95d;color:#fff3c9;box-shadow:0 0 0 1px #f4c95d55}
+.capital-edit{display:flex;gap:8px;align-items:center;margin-top:10px}
+.capital-edit input{flex:1;background:#120407;border:1px solid #71303a;color:white;padding:9px;border-radius:9px}
+.filterbar{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px}
+.filterbar button{border:1px solid #71303a;background:#21080d;color:#ead3c1;padding:7px 11px;border-radius:999px}
+.filterbar button.active{background:#b31b30;color:#fff;border-color:#f4c95d}
+
+/* ===== FULL ANIMATED PROSPERITY BACKGROUND ===== */
+body::before,body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:-5}body::before{background:radial-gradient(circle at 50% 5%,#ffbf4a33,transparent 26%),radial-gradient(circle at 12% 72%,#e52d3d30,transparent 28%),radial-gradient(circle at 88% 60%,#ffd66b25,transparent 30%);animation:skyPulse 8s ease-in-out infinite}body::after{background-image:radial-gradient(circle,#ffd66b 1px,transparent 2px),radial-gradient(circle,#ff9c42 1px,transparent 2px);background-size:95px 95px,145px 145px;background-position:0 0,40px 70px;opacity:.16;animation:starsDrift 22s linear infinite}
+.animated-decor{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:-2}.animated-decor:before{content:"";position:absolute;left:-5%;right:-5%;bottom:-3%;height:30%;background:linear-gradient(180deg,transparent,#25070bcc 55%,#080204)}.scene-glow{position:absolute;width:38vw;height:38vw;border-radius:50%;filter:blur(55px);opacity:.18;animation:glowMove 12s ease-in-out infinite}.glow-a{left:-12vw;top:22vh;background:#ff3b22}.glow-b{right:-12vw;bottom:4vh;background:#ffb52e;animation-delay:4s}
+.dragon{position:absolute;font-size:clamp(145px,26vw,430px);line-height:1;opacity:.17;filter:drop-shadow(0 0 22px #ff5b2244) drop-shadow(0 0 55px #f4c95d28);mix-blend-mode:screen;animation:dragonFloat 13s ease-in-out infinite}.dragon-1{left:-6%;top:4%;animation-duration:16s}.dragon-2{right:-7%;top:10%;transform:scaleX(-1);animation-duration:18s;animation-delay:1s}.dragon-3{left:18%;top:30%;font-size:clamp(90px,18vw,300px);opacity:.09;animation-delay:3s}.dragon-4{right:14%;top:43%;font-size:clamp(100px,20vw,330px);opacity:.11;animation-delay:5s}.dragon-5{left:-4%;bottom:2%;font-size:clamp(120px,22vw,360px);opacity:.12;animation-delay:2s}.dragon-6{right:-5%;bottom:-2%;font-size:clamp(120px,24vw,390px);opacity:.13;animation-delay:7s}.dragon-7{left:42%;bottom:8%;font-size:clamp(70px,15vw,240px);opacity:.07;animation-delay:9s}
+.lantern{position:absolute;font-size:clamp(38px,4.5vw,72px);opacity:.40;filter:drop-shadow(0 0 16px #ff3d24);animation:swing 4.8s ease-in-out infinite}.l1{left:7%;top:6%}.l2{right:9%;top:7%;animation-delay:1.3s}.l3{left:68%;bottom:13%;font-size:48px;animation-delay:2.3s}.l4{left:31%;top:10%;font-size:42px;animation-delay:3.2s}.coin{position:absolute;font-size:30px;opacity:.48;filter:drop-shadow(0 0 11px #f4c95d);animation:coinFloat 5.8s ease-in-out infinite}.coin1{left:24%;bottom:18%}.coin2{right:25%;top:27%;animation-delay:1s}.coin3{left:57%;top:9%;animation-delay:2.4s}.coin4{right:8%;bottom:27%;animation-delay:4s}.cloud{position:absolute;font-size:78px;opacity:.18;animation:cloudMove 24s linear infinite}.cloud1{left:-15%;top:25%}.cloud2{left:48%;top:57%;font-size:105px;animation-delay:7s}.cloud3{left:15%;bottom:22%;font-size:62px;animation-delay:13s}.fortune{position:absolute;color:#f8cc61;font-family:serif;font-weight:900;font-size:clamp(65px,10vw,160px);opacity:.09;text-shadow:0 0 25px #ff8a1c;animation:fortuneFloat 10s ease-in-out infinite}.f1{left:44%;top:17%}.f2{left:7%;bottom:23%;animation-delay:3s}.f3{right:7%;top:28%;animation-delay:6s}.gold-dust{position:absolute;width:4px;height:4px;background:#ffd76a;border-radius:50%;box-shadow:0 0 12px #ffd76a;animation:dust 6s linear infinite}.dust1{left:35%;top:25%}.dust2{left:75%;top:60%;animation-delay:2s}.dust3{left:55%;top:75%;animation-delay:4s}
+@keyframes skyPulse{0%,100%{filter:saturate(.9) brightness(.85)}50%{filter:saturate(1.2) brightness(1.12)}}@keyframes starsDrift{from{transform:translate3d(0,0,0)}to{transform:translate3d(95px,95px,0)}}@keyframes dragonFloat{0%,100%{translate:0 0}50%{translate:22px -18px}}@keyframes swing{0%,100%{transform:rotate(-7deg) translateY(0)}50%{transform:rotate(7deg) translateY(16px)}}@keyframes coinFloat{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-30px) rotate(20deg)}}@keyframes cloudMove{from{transform:translateX(-12vw)}to{transform:translateX(125vw)}}@keyframes glowMove{0%,100%{transform:scale(.9)}50%{transform:translate(8vw,-5vh) scale(1.1)}}@keyframes fortuneFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-16px)}}@keyframes dust{0%{transform:translateY(35vh);opacity:0}25%{opacity:.9}100%{transform:translateY(-25vh) translateX(80px);opacity:0}}
+body[data-period="day"]{background:radial-gradient(circle at 50% 0%,#b9582e 0,#6e291d 34%,#260a0c 100%)}body[data-period="morning"]{background:radial-gradient(circle at 50% 0%,#ffd37c 0,#b6532e 34%,#3a1012 100%)}body[data-period="night"]{background:radial-gradient(circle at 50% 0%,#520e1b 0,#1a0609 38%,#050103 100%)}body[data-period="day"] .dragon{opacity:.22}body[data-period="morning"] .dragon{opacity:.27}body[data-period="night"] .dragon{opacity:.18}@media(prefers-reduced-motion:reduce){.dragon,.lantern,.coin,.cloud,.fortune,.gold-dust,.scene-glow,body::before,body::after{animation:none!important}}
+.brand-head{display:flex;align-items:center;gap:10px}
+.shop-logo{width:52px;height:52px;border-radius:14px;object-fit:cover;border:2px solid var(--gold);background:#4a0d15}
+.logo-upload{font-size:11px;color:#e6c7a0}
+.profile-preview{width:70px;height:70px;border-radius:50%;object-fit:cover;border:2px solid var(--gold);display:block;margin:auto;background:#4a0d15}
+.settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.settings-card{background:#190609;border:1px solid #6f1c25;border-radius:14px;padding:16px}
+.settings-card input,.settings-card select{width:100%;margin-top:6px;background:#120407;border:1px solid #71303a;color:white;padding:10px;border-radius:9px}
+.category-manage{display:flex;gap:8px;margin-top:8px}
+.category-list{display:grid;gap:7px;margin-top:10px}
+.category-row{display:flex;justify-content:space-between;align-items:center;background:#2b0b10;border:1px solid #4d1720;padding:9px 11px;border-radius:9px}
+.category-row button{background:none;border:0;color:#ff9aa5}
+.theme-swatches{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.swatch{width:30px;height:30px;border-radius:50%;border:2px solid #fff4;cursor:pointer}
+.swatch.active{outline:2px solid var(--gold);outline-offset:2px}
+@media(max-width:700px){.settings-grid{grid-template-columns:1fr}}
+.window{position:fixed;inset:0;background:#000b;backdrop-filter:blur(9px);display:none;align-items:center;justify-content:center;padding:18px;z-index:30}.window.show{display:flex}.window-box{width:min(1180px,100%);max-height:92vh;overflow:auto;background:linear-gradient(145deg,#2a080d,#120407);border:1px solid #c43746;border-radius:22px;box-shadow:0 30px 100px #000}.window-head{position:sticky;top:0;z-index:2;display:flex;justify-content:space-between;padding:17px 20px;background:linear-gradient(90deg,#5c0b16,#25070c);border-bottom:1px solid #7d202b}.window-head h2{margin:0;color:#ffe4a5}.window-close{border:1px solid #79303a;background:#24080d;color:#fff;padding:8px 12px;border-radius:9px}.window-body{padding:20px}.window-actions{display:flex;justify-content:flex-end;gap:9px;padding:16px 20px;border-top:1px solid #541821;background:#170508;position:sticky;bottom:0}.report-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.report-card{padding:16px;border:1px solid #71303a;border-radius:14px;background:#20070c}.report-card small{color:#caa8a8}.report-card strong{display:block;font-size:23px;margin-top:7px}.report-section{margin-top:16px}.report-section h3{color:#eac66e}.window-table{overflow:auto}.window-table table{min-width:720px}.tab-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:15px}.tab-row button{background:#21080d;border:1px solid #71303a;color:#e9d0c2;padding:8px 12px;border-radius:999px}.tab-row button.active{background:#b51c31;border-color:#f4c95d;color:white}.confirm-note{font-size:12px;color:#d4b3a9;margin-top:8px}.danger-btn{background:#4a1018!important;border:1px solid #9d2b3a!important;color:#ffb3b9!important;padding:9px 13px;border-radius:9px}@media(max-width:800px){.report-grid{grid-template-columns:1fr 1fr}}@media(max-width:520px){.report-grid{grid-template-columns:1fr}}
+
+/* ===== ACCOUNT / CLOUD LOGIN ===== */
+#loginScreen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;position:relative;overflow:hidden;background:radial-gradient(circle at 50% 15%,#6f1722 0,#22070d 48%,#080204 100%)}
+#loginScreen::before{content:"";position:absolute;inset:-30%;background:radial-gradient(circle at 50% 50%,#f5c75a18,transparent 34%),radial-gradient(circle at 20% 70%,#e52d3d22,transparent 30%),radial-gradient(circle at 80% 30%,#ffbf4a1a,transparent 28%);animation:loginAura 12s ease-in-out infinite}
+.login-card{position:relative;z-index:2;width:min(460px,100%);padding:30px;border:1px solid #c18a3a66;border-radius:24px;background:linear-gradient(145deg,#360b12f2,#130407f5);box-shadow:0 30px 100px #000b,0 0 0 1px #f4c95d10 inset;backdrop-filter:blur(14px)}
+.login-logo{width:92px;height:92px;margin:0 auto 12px;border-radius:24px;border:2px solid var(--gold);display:grid;place-items:center;background:radial-gradient(circle at 38% 30%,#e53c43,#6d0c18 65%,#26050a);box-shadow:0 0 35px #f4c95d44;overflow:hidden}
+.login-logo img{width:86px;height:86px;object-fit:cover;border-radius:21px;display:block}.login-logo svg{display:none}.dragon-logo-svg .body{fill:url(#dragonRed);stroke:#8a111e;stroke-width:3}.dragon-logo-svg .belly{fill:url(#dragonGold);stroke:#bb7e26;stroke-width:2}.dragon-logo-svg .horn{fill:#ffe7a1;stroke:#a86d1e;stroke-width:2}.dragon-logo-svg .mane{fill:#a81528;stroke:#ffca5f;stroke-width:2}.dragon-logo-svg .eye{fill:#fff3a2;stroke:#ff3f32;stroke-width:2}.dragon-logo-svg .claw{fill:#ffe1a2}.dragon-logo-svg .scale{fill:#b91d30;stroke:#f4c95d;stroke-width:1.2}.dragon-logo-svg .whisker{fill:none;stroke:#f4c95d;stroke-width:3;stroke-linecap:round}.dragon-logo-svg .flame{fill:#ffb52e;stroke:#ff6a22;stroke-width:2}.login-card h1{text-align:center;color:#ffe6a9;margin:5px 0 4px;font-size:30px}.login-card>p{text-align:center;color:#d7bdbd;font-size:13px;margin:0 0 20px}
+.login-tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}.login-tab{padding:11px;border-radius:11px;border:1px solid #75303a;background:#1b080c;color:#e7d3c3}.login-tab.active{background:linear-gradient(90deg,#b91e32,#6f0e1a);border-color:#f4c95d;color:#fff6db}
+.login-form{display:grid;gap:12px}.login-form label{font-size:12px;color:#e4cfc0}.login-form input{width:100%;margin-top:6px;background:#0f0305;border:1px solid #71303a;color:white;padding:12px;border-radius:10px;outline:none}.login-form input:focus{border-color:#f4c95d;box-shadow:0 0 0 3px #f4c95d16}
+.login-actions{display:grid;gap:9px;margin-top:3px}.login-status{min-height:20px;font-size:12px;color:#e7caa5;text-align:center}.login-status.error{color:#ff9fa8}.login-status.success{color:#8dffc2}.demo-btn{background:#261017!important;border:1px solid #68303a!important;color:#efdcce!important}
+.cloud-note{margin-top:16px;padding:12px;border-radius:12px;background:#1b080c;border:1px solid #5c2730;color:#cfaeaa;font-size:11px;line-height:1.55}.cloud-note b{color:#f4c95d}
+.config-link{margin-top:10px;width:100%;background:transparent!important;border:1px solid #8b5b2c!important;color:#f5cc79!important;padding:10px 12px;border-radius:9px}.config-dialog{width:min(720px,100%)}.config-help{font-size:12px;line-height:1.6;color:#d8bbb3;background:#170508;border:1px solid #54212a;padding:12px;border-radius:11px}.config-help b{color:#f4c95d}.config-code{width:100%;min-height:170px;resize:vertical;background:#0d0305;color:#f7ead7;border:1px solid #71303a;border-radius:10px;padding:12px;font:12px ui-monospace,SFMono-Regular,Menlo,monospace}.config-ok{color:#8dffc2}.config-warn{color:#ffd98a}
+.account-actions{display:flex;align-items:center;gap:8px;justify-content:flex-end;flex-wrap:wrap}.sync-pill{padding:7px 10px;border-radius:999px;border:1px solid #63303a;background:#1a070b;color:#d9c0b6;font-size:11px}.sync-pill.ok{border-color:#3d8e68;color:#9affc2}.sync-pill.wait{border-color:#9a7a35;color:#ffe099}.logout-btn{padding:8px 10px;border-radius:9px;border:1px solid #79303a;background:#26080d;color:#ffd9c9}
+.dragon-art{position:absolute;width:clamp(250px,38vw,620px);height:auto;opacity:.24;filter:drop-shadow(0 0 18px #ff6b2b50) drop-shadow(0 0 55px #f4c95d35);animation:dragonArtFloat 15s ease-in-out infinite;transform-origin:center}.dragon-art.left{left:-9vw;top:3vh}.dragon-art.right{right:-10vw;top:18vh;transform:scaleX(-1);animation-duration:18s;animation-delay:2s}.dragon-art.bottom{left:14vw;bottom:-19vh;width:clamp(220px,31vw,470px);opacity:.11;animation-duration:20s;animation-delay:5s}
+.dragon-art .body{fill:url(#dragonRed);stroke:#8a111e;stroke-width:3}.dragon-art .belly{fill:url(#dragonGold);stroke:#bb7e26;stroke-width:2}.dragon-art .horn{fill:#ffe7a1;stroke:#a86d1e;stroke-width:2}.dragon-art .mane{fill:#a81528;stroke:#ffca5f;stroke-width:2}.dragon-art .eye{fill:#fff3a2;stroke:#ff3f32;stroke-width:2}.dragon-art .claw{fill:#ffe1a2}.dragon-art .scale{fill:#b91d30;stroke:#f4c95d;stroke-width:1.2}.dragon-art .whisker{fill:none;stroke:#f4c95d;stroke-width:3;stroke-linecap:round}.dragon-art .flame{fill:#ffb52e;stroke:#ff6a22;stroke-width:2}
+@keyframes dragonArtFloat{0%,100%{translate:0 0;rotate:0deg}50%{translate:24px -18px;rotate:1deg}}@keyframes loginAura{0%,100%{transform:scale(.96) rotate(0)}50%{transform:scale(1.05) rotate(3deg)}}
+@media(max-width:700px){.login-card{padding:22px}.dragon-art{opacity:.12}.account-actions{justify-content:flex-start}.user{min-width:0}}
+
+</style>
+<link rel="icon" type="image/png" href="assets/logo.png">
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute"><defs><linearGradient id="dragonRed" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff4f3f"/><stop offset=".42" stop-color="#c4142b"/><stop offset="1" stop-color="#5a0712"/></linearGradient><linearGradient id="dragonGold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff0ab"/><stop offset=".5" stop-color="#e8b83d"/><stop offset="1" stop-color="#9a5c11"/></linearGradient><symbol id="dragon-master" viewBox="0 0 700 480"><path class="body" d="M96 346 C134 253 212 205 300 226 C398 249 468 193 530 116 C574 61 636 63 666 103 C621 117 607 147 615 176 C624 211 675 240 659 288 C645 329 592 331 552 307 C505 279 472 304 433 343 C369 409 264 438 168 409 C136 399 110 377 96 346 Z"/><path class="belly" d="M169 360 C239 392 331 380 402 333 C444 306 474 266 514 257 C549 249 587 270 594 294 C567 283 540 283 515 299 C478 324 454 374 389 402 C305 438 220 428 169 360 Z"/><path class="mane" d="M530 118 l-23 -54 49 30 12 -55 27 49 40 -31 -11 53 52 -2 -38 28 39 31 -53 -2 5 54 -43 -36 -28 39 6 -58 -51 6 40 -38 Z"/><ellipse class="body" cx="602" cy="166" rx="56" ry="64" transform="rotate(17 602 166)"/><path class="horn" d="M579 119 C559 71 573 46 605 28 C603 70 620 87 632 110 Z"/><path class="horn" d="M624 114 C632 72 654 53 678 55 C660 82 662 101 650 124 Z"/><ellipse class="eye" cx="625" cy="153" rx="11" ry="8"/><circle fill="#2d060a" cx="628" cy="153" r="3"/><path class="flame" d="M650 186 C682 181 697 197 686 214 C676 209 669 215 666 229 C651 213 641 207 642 194 Z"/><path class="whisker" d="M653 171 C689 157 704 151 723 158 M654 181 C690 182 707 187 721 199"/><path class="claw" d="M136 337 l-34 33 43 -15 -9 39 34 -43 Z"/><path class="scale" d="M240 275 l13 -18 13 18 -13 11 Z"/><path class="scale" d="M279 292 l13 -18 13 18 -13 11 Z"/><path class="scale" d="M318 300 l13 -18 13 18 -13 11 Z"/><path class="scale" d="M355 291 l13 -18 13 18 -13 11 Z"/><path class="scale" d="M393 277 l13 -18 13 18 -13 11 Z"/></symbol></defs></svg>
+<div class="animated-decor" aria-hidden="true"><div class="scene-glow glow-a"></div><div class="scene-glow glow-b"></div><svg class="dragon-art left" viewBox="0 0 700 480"><use href="#dragon-master"/></svg><svg class="dragon-art right" viewBox="0 0 700 480"><use href="#dragon-master"/></svg><svg class="dragon-art bottom" viewBox="0 0 700 480"><use href="#dragon-master"/></svg><span class="lantern l1">🏮</span><span class="lantern l2">🏮</span><span class="lantern l3">🏮</span><span class="lantern l4">🏮</span><span class="coin coin1">🪙</span><span class="coin coin2">🪙</span><span class="coin coin3">🪙</span><span class="coin coin4">🪙</span><div class="cloud cloud1">☁️</div><div class="cloud cloud2">☁️</div><div class="cloud cloud3">☁️</div><div class="fortune f1">福</div><div class="fortune f2">財</div><div class="fortune f3">旺</div><div class="gold-dust dust1"></div><div class="gold-dust dust2"></div><div class="gold-dust dust3"></div></div>
+<section id="loginScreen"><div class="login-card"><div class="login-logo"><img src="assets/logo.png" alt="โลโก้ คลังเจ๋งแจ๋ว"></div><h1>คลังเจ๋งแจ๋ว</h1><p>ระบบเงินทุนธุรกิจ • เข้าสู่ระบบเพื่อซิงก์ข้อมูลหลายเครื่อง</p><div class="login-tabs"><button id="loginTab" class="login-tab active" type="button" onclick="setAuthMode('login')">เข้าสู่ระบบ</button><button id="registerTab" class="login-tab" type="button" onclick="setAuthMode('register')">สร้างบัญชี</button></div><form class="login-form" onsubmit="submitAuth(event)"><label>อีเมล<input id="authEmail" type="email" autocomplete="email" placeholder="example@email.com" required></label><label>รหัสผ่าน<input id="authPassword" type="password" autocomplete="current-password" placeholder="อย่างน้อย 6 ตัวอักษร" minlength="6" required></label><div class="login-actions"><button id="authSubmit" class="primary" type="submit">🔐 เข้าสู่ระบบ</button><button class="secondary" type="button" onclick="resetPassword()">📧 ลืมรหัสผ่าน</button><button class="demo-btn" type="button" onclick="enterLocalDemo()">🧪 ทดลองใช้ในเครื่องนี้</button></div><div id="authStatus" class="login-status"></div></form><button class="config-link" type="button" onclick="openFirebaseConfig()">⚙️ ตั้งค่าบัญชีออนไลน์ / Firebase</button><div class="cloud-note"><b>บัญชีหลายเครื่อง:</b> ต้องเชื่อม Firebase ก่อนจึงจะสร้างบัญชีและซิงก์ข้อมูลข้ามเครื่องได้</div></div></section>
+<div class="modal" id="firebaseConfigModal"><div class="dialog config-dialog">
+<h3>⚙️ ตั้งค่าบัญชีออนไลน์ (Firebase)</h3>
+<div class="config-help"><b>ทำครั้งเดียว:</b> สร้างโปรเจกต์ใน Firebase → เปิด Authentication → เปิด Email/Password → สร้าง Firestore Database → ไปที่ Project settings > Your apps > Web app แล้วคัดลอก Firebase config มาวางด้านล่าง จากนั้นกดบันทึกและรีโหลดหน้าเว็บ<br><span class="config-warn">หมายเหตุ: ใช้เฉพาะ Firebase Web config เท่านั้น ห้ามนำ Service Account / private key มาวาง</span></div>
+<div class="form" style="margin-top:14px"><label>Firebase config<input id="firebaseConfigFile" type="file" accept=".json,application/json" onchange="loadFirebaseConfigFile(event)"></label><label>หรือวาง config จาก Firebase Console<textarea id="firebaseConfigInput" class="config-code" spellcheck="false" placeholder='{
+  "apiKey": "...",
+  "authDomain": "...firebaseapp.com",
+  "projectId": "...",
+  "storageBucket": "...",
+  "messagingSenderId": "...",
+  "appId": "..."
+}'></textarea></label><div id="firebaseConfigStatus" class="login-status"></div></div>
+<div class="dialog-actions"><button class="secondary" onclick="closeModal('firebaseConfigModal')">ยกเลิก</button><button class="primary" onclick="saveFirebaseConfig()">✓ บันทึกและเชื่อมต่อ</button></div>
+</div></div>
+
+<div id="appShell" style="display:none"><div class="app">
+<aside class="sidebar">
+  <div class="brand">
+  <div class="brand-head">
+    <img id="shopLogo" class="shop-logo" alt="โลโก้ร้าน">
+    <div><h1 id="shopName">คลังเจ๋งแจ๋ว</h1><p>ระบบบริหารเงินทุนธุรกิจ</p></div>
+  </div>
+</div>
+  <div class="nav">
+    <button class="active" onclick="scrollToTop()">🏮 หน้าหลัก</button>
+    <button onclick="openProductsWindow()">🎮 สินค้า / ไอดีเกม</button>
+    <button onclick="openMoneyWindow()">💰 รายรับ - รายจ่าย</button>
+    <button onclick="openMoneyModal('expense')">🧾 บันทึกรายจ่าย</button>
+    <button onclick="showReport()">📊 สรุปผล</button>
+    <button onclick="openSettings()">⚙️ ตั้งค่าร้าน</button>
+    <button onclick="clearAllData()">♻️ รีเซ็ตข้อมูล</button>
+  </div>
+</aside>
+
+<main class="main">
+<header class="top">
+  <div><h2>เงินทุนธุรกิจ</h2><p>บริหารเงิน • คุมต้นทุน • ติดตามกำไร</p></div>
+  <div class="account-actions"><div class="sync-pill wait" id="syncStatus">☁️ รอเชื่อมต่อ</div><div class="user">👑 <span id="ownerName">ทรงกรด ขอกลาง</span><br><small id="accountLabel">เจ้าของร้าน</small></div><button class="logout-btn" onclick="logoutAccount()">ออกจากระบบ</button></div>
+</header>
+
+<section class="content">
+  <div class="cards">
+    <div class="card">
+  <small>💰 เงินทุนรวม</small>
+  <div class="value gold" id="capital">฿0</div>
+  <small>เงินสด + สินค้าคงเหลือ</small>
+  <div class="capital-edit">
+    <input id="capitalInput" type="number" min="0" placeholder="ตั้งเงินทุน">
+    <button class="primary" onclick="openCapitalWindow()">แก้ไข</button>
+  </div>
+</div>
+    <div class="card"><small>💵 เงินสดคงเหลือ</small><div class="value" id="cash">฿0</div><small>เงินสดทั้งหมดในร้าน</small></div>
+    <div class="card"><small>📦 สินค้าคงเหลือ</small><div class="value" id="stockValue">฿0</div><small id="stockCount">0 รายการ</small></div>
+    <div class="card"><small>📈 กำไรสะสม</small><div class="value green" id="profit">฿0</div><small>จากรายการขาย</small></div>
+    <div class="card"><small>💎 เงินที่สามารถลงทุนได้</small><div class="value gold" id="investmentAvailable">฿0</div><small id="investmentHint">ยังไม่ได้จัดสรร</small></div>
+    <div class="card"><small>🏮 เงินที่ใช้ส่วนตัวได้</small><div class="value" id="personalAvailable">฿0</div><small id="personalHint">ยังไม่ได้จัดสรร</small></div>
+    <div class="card"><small>🪙 เงินยังไม่จัดสรร</small><div class="value" id="unallocatedCash">฿0</div><small>เหลือจากเงินสดปัจจุบัน</small></div>
+  </div>
+
+  <div class="grid">
+    <div class="panel">
+      <h3>📈 ภาพรวม 7 วันล่าสุด</h3>
+      <div class="chart" id="chart"></div>
+      <div class="legend"><span>🟢 รายรับ</span><span>🔴 รายจ่าย</span><span>🟡 กำไร</span></div>
+    </div>
+    <div class="panel">
+      <h3>⚡ เมนูลัด</h3>
+      <div class="quick">
+        <button onclick="openProductModal()">➕ เพิ่มไอดีเกม</button>
+        <button onclick="openMoneyWindow()">💰 รายรับ - รายจ่าย</button>
+        <button onclick="openMoneyModal('expense')">🧾 บันทึกรายจ่าย</button>
+        <button onclick="showReport()">📊 ดูรายงาน</button><button onclick="openAllocationWindow()">💎 แบ่งเงินลงทุน / ส่วนตัว</button>
+      </div>
+      <div style="margin-top:18px;padding:14px;background:#2b0b10;border-radius:10px;color:#e8c7a5;font-size:13px">
+        🐲 เคล็ดลับ: แยกเงินทุนออกจากเงินส่วนตัว และบันทึกต้นทุนทุกครั้งก่อนขาย
+      </div>
+    </div>
+  </div>
+
+  <div class="panel tablepanel">
+    <div class="toolbar">
+      <h3 style="margin:0">🎮 รายการสินค้า / ไอดีเกม</h3>
+      <div><input id="search" placeholder="ค้นหาเกม / รหัสไอดี..." oninput="render()">
+      <button class="primary" onclick="openProductModal()">+ เพิ่มรายการ</button></div>
+    </div>
+    <div class="filterbar" id="categoryFilters"></div>
+    <div style="overflow:auto">
+    <table><thead><tr><th>รหัส</th><th>เกม</th><th>ชื่อไอดี</th><th>ราคาทุน</th><th>ราคาขาย</th><th>กำไร</th><th>สถานะ</th><th>วันที่</th><th>จัดการ</th></tr></thead>
+    <tbody id="productTable"></tbody></table>
+    </div>
+  </div>
+</section>
+</main>
+</div>
+</div>
+
+<div class="modal" id="productModal"><div class="dialog">
+<h3 id="productTitle">➕ เพิ่มสินค้า / ไอดีเกม</h3>
+<div class="form">
+<input type="hidden" id="editId">
+<div class="formrow"><label>รหัสไอดี<input id="pid" placeholder="เช่น EFO-001"></label><label>เกม<input id="game" placeholder="เช่น eFootball"></label></div>
+<label>หมวดหมู่ — กดเลือกได้</label>
+<div class="category-chips" id="modalCategories"></div>
+<input type="hidden" id="category" value="eFootball">
+<label>ชื่อ/รายละเอียดไอดี<input id="pname" placeholder="เช่น ID 5 ดาว ไทย"></label>
+<div class="formrow"><label>ราคาทุน<input id="cost" type="number" min="0" placeholder="0"></label><label>ราคาขาย<input id="sell" type="number" min="0" placeholder="ยังไม่ขาย"></label></div>
+<label>สถานะ<select id="status"><option value="stock">ยังไม่ขาย</option><option value="sold">ขายแล้ว</option></select></label>
+</div>
+<div class="dialog-actions"><button class="secondary" onclick="closeModal('productModal')">ยกเลิก</button><button class="primary" onclick="saveProduct()">บันทึก</button></div>
+</div></div>
+
+<div class="modal" id="moneyModal"><div class="dialog">
+<h3 id="moneyTitle">💰 บันทึกรายรับ</h3>
+<div class="form"><label>รายการ<input id="mname" placeholder="เช่น ขายไอดี eFootball"></label><label>จำนวนเงิน<input id="mamount" type="number" min="0" placeholder="0"></label><label>หมายเหตุ<input id="mnote" placeholder="รายละเอียดเพิ่มเติม"></label></div>
+<div class="dialog-actions"><button class="secondary" onclick="closeModal('moneyModal')">ยกเลิก</button><button class="primary" onclick="saveMoney()">บันทึก</button></div>
+</div></div>
+
+<div class="modal" id="settingsModal"><div class="dialog" style="max-width:760px">
+<h3>⚙️ ตั้งค่าร้านและหน้าตาเว็บไซต์</h3>
+<div class="settings-grid">
+  <div class="settings-card">
+    <h4 style="margin-top:0">🏪 ข้อมูลร้าน</h4>
+    <label>ชื่อร้าน<input id="shopNameInput" placeholder="ชื่อร้าน"></label>
+    <label style="display:block;margin-top:10px">ชื่อเจ้าของ<input id="ownerNameInput" placeholder="ชื่อเจ้าของ"></label>
+    <label style="display:block;margin-top:10px">โลโก้ / รูปโปรไฟล์<input id="logoFile" type="file" accept="image/*" onchange="previewLogo(event)"></label>
+    <img id="profilePreview" class="profile-preview" alt="ตัวอย่างโลโก้" style="margin-top:12px">
+    <button class="primary" style="width:100%;margin-top:12px" onclick="saveShopInfo()">✓ ยืนยันข้อมูลร้าน</button>
+  </div>
+  <div class="settings-card">
+    <h4 style="margin-top:0">🎨 เปลี่ยนธีม</h4>
+    <p style="font-size:12px;color:#d2aeb2">เลือกสีหลักของร้าน</p>
+    <div class="theme-swatches">
+      <button class="swatch" style="background:#8d1020" onclick="setTheme('#8d1020','#c51f32','#f4c95d')"></button>
+      <button class="swatch" style="background:#174d3a" onclick="setTheme('#174d3a','#238b67','#e5c76b')"></button>
+      <button class="swatch" style="background:#183a72" onclick="setTheme('#183a72','#2864b8','#f4c95d')"></button>
+      <button class="swatch" style="background:#4b2577" onclick="setTheme('#4b2577','#783cb5','#f0c7ff')"></button>
+    </div>
+    <div class="settings-card" style="margin-top:12px;background:#120407">
+      <h4 style="margin:0 0 8px">🕐 โหมดเวลาและพื้นหลัง</h4>
+      <select id="periodMode"><option value="auto">อัตโนมัติตามเวลาจริง</option><option value="morning">🌅 เช้า</option><option value="day">☀️ กลางวัน</option><option value="night">🌙 กลางคืน</option></select>
+      <button class="primary" style="margin-top:10px;width:100%" onclick="saveAppearance()">✓ ยืนยันการเปลี่ยนพื้นหลัง</button>
+    </div>
+    <h4>🏷️ จัดการหมวดหมู่</h4>
+    <div class="category-manage">
+      <input id="newCategory" placeholder="ชื่อหมวดหมู่ใหม่">
+      <button class="primary" onclick="addCategory()">+ เพิ่ม</button>
+    </div>
+    <div class="category-list" id="categoryList"></div>
+  </div>
+</div>
+<div class="dialog-actions"><button class="secondary" onclick="closeModal('settingsModal')">ปิด</button><button class="primary" onclick="saveSettings()">บันทึกการตั้งค่า</button></div>
+</div></div>
+<div class="window" id="productsWindow"><div class="window-box"><div class="window-head"><h2>🎮 สินค้า / ไอดีเกม</h2><button class="window-close" onclick="closeWindow('productsWindow')">✕ ปิด</button></div><div class="window-body"><div class="toolbar"><input id="windowSearch" placeholder="ค้นหาไอดี / ชื่อสินค้า..." oninput="renderWindowProducts()"><button class="primary" onclick="openProductModal()">＋ เพิ่มสินค้า / ไอดี</button></div><div class="window-table"><table><thead><tr><th>ไอดี</th><th>เกม</th><th>ชื่อ</th><th>ต้นทุน</th><th>ขาย</th><th>กำไร</th><th>สถานะ</th><th>จัดการ</th></tr></thead><tbody id="windowProductTable"></tbody></table></div></div></div></div>
+<div class="window" id="moneyWindow"><div class="window-box"><div class="window-head"><h2>💰 รายรับ - รายจ่าย</h2><button class="window-close" onclick="closeWindow('moneyWindow')">✕ ปิด</button></div><div class="window-body"><div class="quick"><button onclick="openMoneyModal('income')">＋ บันทึกรายรับ</button><button onclick="openMoneyModal('expense')">＋ บันทึกรายจ่าย</button></div><div class="window-table" style="margin-top:18px"><table><thead><tr><th>วันที่</th><th>ประเภท</th><th>รายการ</th><th>หมายเหตุ</th><th>จำนวนเงิน</th><th>จัดการ</th></tr></thead><tbody id="moneyTable"></tbody></table></div></div></div></div>
+<div class="window" id="reportWindow"><div class="window-box"><div class="window-head"><h2>📊 สรุปรายงานธุรกิจ</h2><button class="window-close" onclick="closeWindow('reportWindow')">✕ ปิด</button></div><div class="window-body"><div class="tab-row"><button class="active" onclick="renderReport('overview',this)">ภาพรวม</button><button onclick="renderReport('cashflow',this)">กระแสเงินสด</button><button onclick="renderReport('stock',this)">สินค้าคงเหลือ</button><button onclick="renderReport('profit',this)">กำไร</button></div><div id="reportContent"></div></div><div class="window-actions"><button class="secondary" onclick="printReport()">🖨️ พิมพ์</button><button class="primary" onclick="closeWindow('reportWindow')">ปิดรายงาน</button></div></div></div>
+<div class="window" id="capitalWindow"><div class="window-box" style="max-width:620px"><div class="window-head"><h2>💰 แก้ไขเงินทุนเริ่มต้น</h2><button class="window-close" onclick="closeWindow('capitalWindow')">✕ ปิด</button></div><div class="window-body"><div class="form"><label>เงินทุนเริ่มต้น (บาท)<input id="capitalWindowInput" type="number" min="0" step="1"></label><div class="confirm-note">แก้ไขแล้วต้องกด “ยืนยันการเปลี่ยนแปลง” จึงจะบันทึก</div></div></div><div class="window-actions"><button class="secondary" onclick="closeWindow('capitalWindow')">ยกเลิก</button><button class="primary" onclick="confirmCapital()">✓ ยืนยันการเปลี่ยนแปลง</button></div></div></div>
+<div class="window" id="allocationWindow"><div class="window-box" style="max-width:700px"><div class="window-head"><h2>💎 แบ่งเงินลงทุน / เงินส่วนตัว</h2><button class="window-close" onclick="closeWindow('allocationWindow')">✕ ปิด</button></div><div class="window-body"><div class="report-grid"><div class="report-card"><small>เงินสดปัจจุบัน</small><strong class="green" id="allocationCash">฿0</strong></div><div class="report-card"><small>เงินลงทุน</small><strong class="gold" id="allocationInvestmentPreview">฿0</strong></div><div class="report-card"><small>เงินส่วนตัว</small><strong id="allocationPersonalPreview">฿0</strong></div><div class="report-card"><small>ยังไม่จัดสรร</small><strong id="allocationUnallocatedPreview">฿0</strong></div></div><div class="form" style="margin-top:16px"><div class="formrow"><label>เงินที่สามารถลงทุนได้ (บาท)<input id="investmentAmount" type="number" min="0" step="1" oninput="updateAllocationPreview()"></label><label>เงินที่ใช้ส่วนตัวได้ (บาท)<input id="personalAmount" type="number" min="0" step="1" oninput="updateAllocationPreview()"></label></div><div class="confirm-note">กำหนดจำนวนเงินได้เอง และระบบจะไม่ให้จัดสรรเกินเงินสดปัจจุบัน</div><div id="allocationError" class="login-status error"></div></div></div><div class="window-actions"><button class="secondary" onclick="closeWindow('allocationWindow')">ยกเลิก</button><button class="primary" onclick="confirmAllocation()">✓ ยืนยันการแบ่งเงิน</button></div></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const KEY='khlangJengJaewBusinessFundV1';const DEFAULT_LOGO='assets/logo.png';const FIREBASE_REQUIRED_KEYS=['apiKey','authDomain','projectId','messagingSenderId','appId'];window.authMode='login';
+let selectedCategory='all';
+let tempLogo='';
+let state=JSON.parse(localStorage.getItem(KEY)||'null')||{
+  initialCapital:10000,
+  allocation:{investment:0,personal:0},
+  shopName:'คลังเจ๋งแจ๋ว',
+  ownerName:'ทรงกรด ขอกลาง',
+  logo:'assets/logo.png',
+  theme:{red:'#8d1020',red2:'#c51f32',gold:'#f4c95d'},
+  categories:['eFootball','RoV','Free Fire','อื่นๆ'],
+  products:[
+    {id:'EFO-001',game:'eFootball',category:'eFootball',name:'ID 5 ดาว (ไทย)',cost:1150,sell:1499,status:'sold',date:'2026-09-20'},
+    {id:'ROV-002',game:'RoV',category:'RoV',name:'สกินเยอะ (VIP)',cost:800,sell:899,status:'sold',date:'2026-09-18'},
+    {id:'FF-003',game:'Free Fire',category:'Free Fire',name:'ไอดีเทพ',cost:650,sell:0,status:'stock',date:'2026-09-22'}
+  ],
+  money:[]
+};
+
+if(!state.shopName) state.shopName='คลังเจ๋งแจ๋ว';
+if(!state.ownerName) state.ownerName='ทรงกรด ขอกลาง';
+if(!state.logo) state.logo=DEFAULT_LOGO;
+if(!state.theme) state.theme={red:'#8d1020',red2:'#c51f32',gold:'#f4c95d'};
+if(!state.categories) state.categories=['eFootball','RoV','Free Fire','อื่นๆ'];
+if(!state.periodMode) state.periodMode='auto';
+if(!state.allocation)state.allocation={investment:0,personal:0};
+if(!Number.isFinite(+state.allocation.investment))state.allocation.investment=0;
+if(!Number.isFinite(+state.allocation.personal))state.allocation.personal=0;
+function persist(){state.products.forEach(x=>{if(!x.category)x.category=x.game||'อื่นๆ'});if(!state.allocation)state.allocation={investment:0,personal:0};localStorage.setItem(KEY,JSON.stringify(state));if(window.__cloudSave)window.__cloudSave(state);}
+function baht(n){return new Intl.NumberFormat('th-TH',{style:'currency',currency:'THB',maximumFractionDigits:0}).format(n||0)}
+function getAllocation(){if(!state.allocation)state.allocation={investment:0,personal:0};return state.allocation}
+function allocTotals(){const c=Math.max(0,cash());const a=getAllocation();const inv=Math.max(0,+a.investment||0),per=Math.max(0,+a.personal||0);return{cash:c,investment:Math.min(inv,c),personal:Math.min(per,Math.max(0,c-Math.min(inv,c))),unallocated:Math.max(0,c-inv-per)}}
+function soldProfit(){return state.products.filter(x=>x.status==='sold').reduce((a,x)=>a+(+x.sell||0)-(+x.cost||0),0)}
+function stockValue(){return state.products.filter(x=>x.status==='stock').reduce((a,x)=>a+(+x.cost||0),0)}
+function cash(){let c=state.initialCapital+soldProfit()-stockValue(); state.money.forEach(x=>c+=x.type==='income'?+x.amount:-x.amount); return c}
+function capital(){return cash()+stockValue()}
+function render(){
+ applySettings();
+ applyPeriod();
+ document.getElementById('shopName').textContent=state.shopName;
+ document.getElementById('ownerName').textContent=state.ownerName;
+ document.getElementById('capital').textContent=baht(capital());
+ document.getElementById('capitalInput').value=state.initialCapital;
+ document.getElementById('cash').textContent=baht(cash());
+ document.getElementById('stockValue').textContent=baht(stockValue());
+ document.getElementById('stockCount').textContent=state.products.filter(x=>x.status==='stock').length+' รายการ';
+ document.getElementById('profit').textContent=baht(soldProfit());
+ const q=(document.getElementById('search').value||'').toLowerCase();
+ const rows=state.products.filter(x=>{
+   const text=(x.id+x.game+x.name+(x.category||x.game)).toLowerCase();
+   const cat=(x.category||x.game);
+   return text.includes(q) && (selectedCategory==='all' || cat===selectedCategory);
+ });
+ document.getElementById('productTable').innerHTML=rows.length?rows.map((x,i)=>`<tr>
+<td>${x.id}</td><td>${x.category||x.game}</td><td>${x.name}</td><td>${baht(x.cost)}</td><td>${x.sell?baht(x.sell):'-'}</td>
+<td class="${x.status==='sold'&&x.sell-x.cost>=0?'green':'red'}">${x.status==='sold'?baht(x.sell-x.cost):'-'}</td>
+<td><span class="badge ${x.status}">${x.status==='sold'?'ขายแล้ว':'ยังไม่ขาย'}</span></td><td>${x.date}</td>
+<td class="actions"><button onclick="editProduct('${x.id}')">✏️</button><button onclick="deleteProduct('${x.id}')">🗑️</button></td></tr>`).join(''):`<tr><td colspan="9" class="empty">ยังไม่มีรายการ</td></tr>`;
+ renderChart();
+ renderCategoryManager();
+}
+function renderChart(){
+ const el=document.getElementById('chart'); const days=[];
+ for(let i=6;i>=0;i--){let d=new Date();d.setDate(d.getDate()-i);let s=d.toISOString().slice(0,10);
+ let income=state.products.filter(x=>x.status==='sold'&&x.date===s).reduce((a,x)=>a+(+x.sell||0),0)+state.money.filter(x=>x.type==='income'&&x.date===s).reduce((a,x)=>a+x.amount,0);
+ let expense=state.products.filter(x=>x.date===s).reduce((a,x)=>a+(+x.cost||0),0)+state.money.filter(x=>x.type==='expense'&&x.date===s).reduce((a,x)=>a+x.amount,0);
+ days.push({s,income,expense,profit:Math.max(0,income-expense)});}
+ const max=Math.max(500,...days.flatMap(x=>[x.income,x.expense,x.profit]));
+ el.innerHTML=days.map(x=>`<div class="barwrap" title="${x.s}"><div class="bar income" style="height:${x.income/max*90}%"></div><div class="bar expense" style="height:${x.expense/max*90}%"></div><div class="bar profit" style="height:${x.profit/max*90}%"></div></div>`).join('');
+}
+function chooseGame(cat){
+ document.getElementById('category').value=cat;
+ const game=document.getElementById('game');
+ if(!game.value || state.categories.includes(game.value)) game.value=cat;
+ document.querySelectorAll('[data-modal-cat]').forEach(b=>b.classList.toggle('selected',b.dataset.modalCat===cat));
+}
+function setCategory(cat){
+ selectedCategory=cat;
+ document.querySelectorAll('#categoryFilters button').forEach(b=>b.classList.toggle('active',b.dataset.cat===cat));
+ render();
+}
+function saveCapital(){
+ const n=+document.getElementById('capitalInput').value;
+ if(n<0 || !Number.isFinite(n)) return alert('กรุณาใส่จำนวนเงินที่ถูกต้อง');
+ state.initialCapital=n;
+ persist(); render(); toast('แก้ไขเงินทุนเริ่มต้นแล้ว');
+}
+
+function applySettings(){
+ const root=document.documentElement;
+ root.style.setProperty('--red',state.theme.red);
+ root.style.setProperty('--red2',state.theme.red2);
+ root.style.setProperty('--gold',state.theme.gold);
+ document.getElementById('shopName').textContent=state.shopName;
+ const logo=document.getElementById('shopLogo');
+ logo.src=state.logo||DEFAULT_LOGO;
+}
+function openSettings(){
+ document.getElementById('shopNameInput').value=state.shopName;
+ document.getElementById('ownerNameInput').value=state.ownerName;
+ document.getElementById('profilePreview').src=state.logo||document.getElementById('shopLogo').src;
+ tempLogo=state.logo;
+ document.getElementById('periodMode').value=state.periodMode||'auto';
+ renderCategoryManager();
+ document.getElementById('settingsModal').classList.add('show');
+}
+function previewLogo(e){
+ const file=e.target.files&&e.target.files[0]; if(!file)return;
+ const img=new Image(),url=URL.createObjectURL(file);
+ img.onload=()=>{const size=320,scale=Math.min(1,size/Math.max(img.width,img.height));const c=document.createElement('canvas');c.width=Math.max(1,Math.round(img.width*scale));c.height=Math.max(1,Math.round(img.height*scale));const ctx=c.getContext('2d');ctx.drawImage(img,0,0,c.width,c.height);tempLogo=c.toDataURL('image/jpeg',.82);document.getElementById('profilePreview').src=tempLogo;URL.revokeObjectURL(url)};img.src=url;
+}
+function getAutoPeriod(){
+ const h=new Date().getHours();
+ if(h>=5 && h<7) return 'morning';
+ if(h>=7 && h<17) return 'day';
+ return 'night';
+}
+function applyPeriod(){
+ const mode=state.periodMode||'auto';
+ const period=mode==='auto'?getAutoPeriod():mode;
+ document.body.dataset.period=period;
+}
+function saveShopInfo(){
+ state.shopName=document.getElementById('shopNameInput').value.trim()||'คลังเจ๋งแจ๋ว';
+ state.ownerName=document.getElementById('ownerNameInput').value.trim()||'เจ้าของร้าน';
+ state.logo=tempLogo||'';
+ persist(); render(); toast('✓ ยืนยันข้อมูลร้านและบันทึกแล้ว');
+}
+function saveAppearance(){
+ state.periodMode=document.getElementById('periodMode').value;
+ persist(); applyPeriod(); toast('✓ ยืนยันพื้นหลังและโหมดเวลาแล้ว');
+}
+function saveSettings(){
+ saveShopInfo();
+ state.periodMode=document.getElementById('periodMode').value;
+ persist(); applyPeriod(); render(); closeModal('settingsModal'); toast('✓ บันทึกการตั้งค่าทั้งหมดแล้ว');
+}
+function setTheme(red,red2,gold){
+ state.theme={red,red2,gold}; applySettings(); toast('แสดงตัวอย่างธีมแล้ว — กด ยืนยันการเปลี่ยนพื้นหลัง หรือ บันทึกการตั้งค่าทั้งหมด');
+}
+function renderCategoryManager(){
+ const list=document.getElementById('categoryList');
+ list.innerHTML=state.categories.map((c,i)=>`<div class="category-row"><span>🏷️ ${c}</span>${state.categories.length>1?`<button onclick="removeCategory(${i})">ลบ</button>`:''}</div>`).join('');
+ const filters=document.getElementById('categoryFilters');
+ filters.innerHTML=`<button class="${selectedCategory==='all'?'active':''}" data-cat="all" onclick="setCategory('all')">ทั้งหมด</button>`+
+ state.categories.map(c=>`<button class="${selectedCategory===c?'active':''}" data-cat="${c}" onclick="setCategory('${String(c).replace(/'/g,"\\'")}')">🏷️ ${c}</button>`).join('');
+}
+function addCategory(){
+ const input=document.getElementById('newCategory'); const c=input.value.trim();
+ if(!c)return;
+ if(state.categories.includes(c))return alert('มีหมวดหมู่นี้อยู่แล้ว');
+ state.categories.push(c); input.value=''; persist(); renderCategoryManager(); render(); toast('เพิ่มหมวดหมู่แล้ว');
+}
+function removeCategory(i){
+ const c=state.categories[i];
+ if(!confirm('ลบหมวดหมู่ '+c+' หรือไม่?'))return;
+ state.categories.splice(i,1);
+ if(selectedCategory===c)selectedCategory='all';
+ state.products.forEach(x=>{if(x.category===c)x.category='อื่นๆ'});
+ persist(); renderCategoryManager(); render(); toast('ลบหมวดหมู่แล้ว');
+}
+function renderModalCategories(active='eFootball'){
+ const el=document.getElementById('modalCategories'); if(!el)return;
+ el.innerHTML=state.categories.map(c=>`<button type="button" class="category-chip ${c===active?'selected':''}" data-modal-cat="${c}" onclick="chooseGame('${String(c).replace(/'/g,"\\'")}')">🏷️ ${c}</button>`).join('');
+}
+function openProductModal(){
+ document.getElementById('editId').value='';
+ ['pid','game','pname','cost','sell'].forEach(id=>document.getElementById(id).value='');
+ document.getElementById('status').value='stock';
+ renderModalCategories(state.categories[0]||'อื่นๆ');
+ chooseGame(state.categories[0]||'อื่นๆ');
+ document.getElementById('productTitle').textContent='➕ เพิ่มสินค้า / ไอดีเกม';
+ document.getElementById('productModal').classList.add('show')
+}
+function editProduct(id){
+ let x=state.products.find(p=>p.id===id);if(!x)return;
+ document.getElementById('editId').value=id;document.getElementById('pid').value=x.id;
+ document.getElementById('game').value=x.game;document.getElementById('pname').value=x.name;
+ document.getElementById('cost').value=x.cost;document.getElementById('sell').value=x.sell||'';
+ document.getElementById('status').value=x.status;renderModalCategories(x.category||x.game);chooseGame(x.category||x.game);
+ document.getElementById('productTitle').textContent='✏️ แก้ไขรายการ';
+ document.getElementById('productModal').classList.add('show')
+}
+function saveProduct(){
+ const id=document.getElementById('pid').value.trim();if(!id)return alert('กรุณาใส่รหัสไอดี');
+ const category=document.getElementById('category').value;
+ const data={id,game:document.getElementById('game').value.trim()||category,category,name:document.getElementById('pname').value.trim(),cost:+document.getElementById('cost').value||0,sell:+document.getElementById('sell').value||0,status:document.getElementById('status').value,date:new Date().toISOString().slice(0,10)};
+ const old=document.getElementById('editId').value;
+ if(old){let i=state.products.findIndex(x=>x.id===old);state.products[i]=data}else state.products.unshift(data);
+ persist();render();closeModal('productModal');if(document.getElementById('productsWindow').classList.contains('show'))renderWindowProducts();if(document.getElementById('reportWindow').classList.contains('show'))renderReport('overview',document.querySelector('#reportWindow .tab-row button'));toast('บันทึกข้อมูลเรียบร้อย');
+}
+function deleteProduct(id){if(confirm('ลบรายการนี้หรือไม่?')){state.products=state.products.filter(x=>x.id!==id);persist();render();toast('ลบรายการแล้ว')}}
+let moneyType='income';
+function openMoneyModal(type){moneyType=type;document.getElementById('moneyTitle').textContent=type==='income'?'💰 บันทึกรายรับ':'🧾 บันทึกรายจ่าย';document.getElementById('mname').value='';document.getElementById('mamount').value='';document.getElementById('mnote').value='';document.getElementById('moneyModal').classList.add('show')}
+function saveMoney(){let amount=+document.getElementById('mamount').value||0;if(!amount)return alert('กรุณาใส่จำนวนเงิน');state.money.push({type:moneyType,name:document.getElementById('mname').value,note:document.getElementById('mnote').value,amount,date:new Date().toISOString().slice(0,10)});persist();render();closeModal('moneyModal');if(document.getElementById('moneyWindow').classList.contains('show'))renderMoneyWindow();toast('บันทึกรายการแล้ว')}
+function closeModal(id){document.getElementById(id).classList.remove('show')}
+function toast(t){let x=document.getElementById('toast');x.textContent='✓ '+t;x.classList.add('show');setTimeout(()=>x.classList.remove('show'),1800)}
+function openWindow(id){document.getElementById(id).classList.add('show')}function closeWindow(id){document.getElementById(id).classList.remove('show')}function showReport(){openWindow('reportWindow');renderReport('overview',document.querySelector('#reportWindow .tab-row button'))}function openProductsWindow(){openWindow('productsWindow');renderWindowProducts()}function openMoneyWindow(){openWindow('moneyWindow');renderMoneyWindow()}function openCapitalWindow(){document.getElementById('capitalWindowInput').value=state.initialCapital;openWindow('capitalWindow')}function confirmCapital(){const n=Number(document.getElementById('capitalWindowInput').value);if(!Number.isFinite(n)||n<0)return alert('กรุณาใส่จำนวนเงินที่ถูกต้อง');state.initialCapital=n;persist();render();closeWindow('capitalWindow');toast('ยืนยันเงินทุนและบันทึกแล้ว')}function renderWindowProducts(){const q=(document.getElementById('windowSearch')?.value||'').toLowerCase();const rows=state.products.filter(x=>(x.id+x.game+x.name+(x.category||x.game)).toLowerCase().includes(q));document.getElementById('windowProductTable').innerHTML=rows.length?rows.map(x=>`<tr><td>${x.id}</td><td>${x.category||x.game}</td><td>${x.name||'-'}</td><td>${baht(x.cost)}</td><td>${x.sell?baht(x.sell):'-'}</td><td>${x.status==='sold'?baht(x.sell-x.cost):'-'}</td><td><span class="badge ${x.status}">${x.status==='sold'?'ขายแล้ว':'ยังไม่ขาย'}</span></td><td class="actions"><button onclick="editProduct('${x.id}')">✏️</button><button onclick="deleteProduct('${x.id}');renderWindowProducts()">🗑️</button></td></tr>`).join(''):'<tr><td colspan="8" class="empty">ยังไม่มีรายการ</td></tr>'}function renderMoneyWindow(){document.getElementById('moneyTable').innerHTML=state.money.length?state.money.slice().reverse().map((x,i)=>`<tr><td>${x.date}</td><td>${x.type==='income'?'<span class="green">รายรับ</span>':'<span class="red">รายจ่าย</span>'}</td><td>${x.name||'-'}</td><td>${x.note||'-'}</td><td>${baht(x.amount)}</td><td><button class="danger-btn" onclick="deleteMoney(${state.money.length-1-i})">ลบ</button></td></tr>`).join(''):'<tr><td colspan="6" class="empty">ยังไม่มีรายการ</td></tr>'}function deleteMoney(i){if(!confirm('ต้องการลบรายการนี้หรือไม่?'))return;state.money.splice(i,1);persist();render();renderMoneyWindow();toast('ลบรายการแล้ว')}function renderReport(type,btn){document.querySelectorAll('#reportWindow .tab-row button').forEach(b=>b.classList.remove('active'));if(btn)btn.classList.add('active');const sold=state.products.filter(x=>x.status==='sold'),stock=state.products.filter(x=>x.status==='stock');let html='';if(type==='overview')html=`<div class="report-grid"><div class="report-card"><small>เงินทุนรวม</small><strong class="gold">${baht(capital())}</strong></div><div class="report-card"><small>เงินสด</small><strong class="green">${baht(cash())}</strong></div><div class="report-card"><small>สินค้าคงเหลือ</small><strong>${baht(stockValue())}</strong></div><div class="report-card"><small>กำไรสะสม</small><strong class="gold">${baht(soldProfit())}</strong></div></div><div class="report-section"><h3>รายการล่าสุด</h3><div class="window-table"><table><thead><tr><th>ไอดี</th><th>เกม</th><th>ต้นทุน</th><th>ขาย</th><th>กำไร</th><th>สถานะ</th></tr></thead><tbody>${state.products.slice(0,12).map(x=>`<tr><td>${x.id}</td><td>${x.category||x.game}</td><td>${baht(x.cost)}</td><td>${x.sell?baht(x.sell):'-'}</td><td>${x.status==='sold'?baht(x.sell-x.cost):'-'}</td><td>${x.status==='sold'?'ขายแล้ว':'ยังไม่ขาย'}</td></tr>`).join('')||'<tr><td colspan="6" class="empty">ไม่มีข้อมูล</td></tr>'}</tbody></table></div></div>`;else if(type==='cashflow')html=`<div class="report-grid"><div class="report-card"><small>รายรับจากการขาย</small><strong class="green">${baht(sold.reduce((a,x)=>a+(+x.sell||0),0))}</strong></div><div class="report-card"><small>รายจ่ายเงินสด</small><strong class="red">${baht(state.money.filter(x=>x.type==='expense').reduce((a,x)=>a+x.amount,0))}</strong></div><div class="report-card"><small>ต้นทุนสินค้าทั้งหมด</small><strong>${baht(state.products.reduce((a,x)=>a+(+x.cost||0),0))}</strong></div><div class="report-card"><small>ธุรกรรม</small><strong>${state.money.length}</strong></div></div><div class="report-section"><h3>รายการเงินสด</h3><div class="window-table"><table><thead><tr><th>วันที่</th><th>ประเภท</th><th>รายการ</th><th>จำนวน</th></tr></thead><tbody>${state.money.slice().reverse().map(x=>`<tr><td>${x.date}</td><td>${x.type==='income'?'รายรับ':'รายจ่าย'}</td><td>${x.name||'-'}</td><td>${baht(x.amount)}</td></tr>`).join('')||'<tr><td colspan="4" class="empty">ไม่มีข้อมูล</td></tr>'}</tbody></table></div></div>`;else if(type==='stock')html=`<div class="report-grid"><div class="report-card"><small>ไอดีคงเหลือ</small><strong>${stock.length}</strong></div><div class="report-card"><small>มูลค่าต้นทุน</small><strong>${baht(stockValue())}</strong></div><div class="report-card"><small>ขายแล้ว</small><strong>${sold.length}</strong></div><div class="report-card"><small>ทั้งหมด</small><strong>${state.products.length}</strong></div></div><div class="report-section window-table"><table><thead><tr><th>ไอดี</th><th>เกม</th><th>ชื่อ</th><th>ต้นทุน</th></tr></thead><tbody>${stock.map(x=>`<tr><td>${x.id}</td><td>${x.category||x.game}</td><td>${x.name||'-'}</td><td>${baht(x.cost)}</td></tr>`).join('')||'<tr><td colspan="4" class="empty">ไม่มีสินค้าคงเหลือ</td></tr>'}</tbody></table></div>`;else html=`<div class="report-grid"><div class="report-card"><small>กำไรจากไอดีที่ขาย</small><strong class="gold">${baht(soldProfit())}</strong></div><div class="report-card"><small>จำนวนไอดีที่ขาย</small><strong>${sold.length}</strong></div><div class="report-card"><small>ต้นทุนคงเหลือ</small><strong>${baht(stockValue())}</strong></div><div class="report-card"><small>เงินทุนปัจจุบัน</small><strong class="gold">${baht(capital())}</strong></div></div><div class="report-section"><h3>กำไรรายไอดี</h3><div class="window-table"><table><thead><tr><th>ไอดี</th><th>เกม</th><th>ต้นทุน</th><th>ขาย</th><th>กำไร</th></tr></thead><tbody>${sold.map(x=>`<tr><td>${x.id}</td><td>${x.category||x.game}</td><td>${baht(x.cost)}</td><td>${baht(x.sell)}</td><td class="${x.sell-x.cost>=0?'green':'red'}">${baht(x.sell-x.cost)}</td></tr>`).join('')||'<tr><td colspan="5" class="empty">ยังไม่มีไอดีที่ขายแล้ว</td></tr>'}</tbody></table></div></div>`;document.getElementById('reportContent').innerHTML=html}function printReport(){const w=window.open('','_blank');if(!w)return;w.document.write('<html lang="th"><head><title>รายงานคลังเจ๋งแจ๋ว</title><style>body{font-family:Arial;padding:30px}table{width:100%;border-collapse:collapse}td,th{border:1px solid #ccc;padding:8px}</style></head><body><h1>คลังเจ๋งแจ๋ว — สรุปรายงานธุรกิจ</h1>'+document.getElementById('reportContent').innerHTML+'</body></html>');w.document.close();w.print()}
+
+function setAuthMode(mode){window.authMode=mode;document.getElementById('loginTab').classList.toggle('active',mode==='login');document.getElementById('registerTab').classList.toggle('active',mode==='register');document.getElementById('authSubmit').textContent=mode==='login'?'🔐 เข้าสู่ระบบ':'✨ สร้างบัญชี';document.getElementById('authPassword').autocomplete=mode==='login'?'current-password':'new-password';document.getElementById('authStatus').textContent=''}
+async function submitAuth(e){e.preventDefault();const email=document.getElementById('authEmail').value.trim();const password=document.getElementById('authPassword').value;if(window.authMode==='register')await window.cloudRegister?.(email,password);else await window.cloudLogin?.(email,password)}
+function enterLocalDemo(){const name=document.getElementById('authEmail').value||'ทดลองในเครื่อง';localStorage.setItem(KEY+'_localDemo','1');document.getElementById('loginScreen').style.display='none';document.getElementById('appShell').style.display='block';document.getElementById('accountLabel').textContent='โหมดทดลอง • '+name;document.getElementById('syncStatus').textContent='🧪 เครื่องนี้เท่านั้น';document.getElementById('syncStatus').className='sync-pill wait';render();toast('เข้าโหมดทดลองแล้ว')}
+function onCloudUser(user){if(!user){if(localStorage.getItem(KEY+'_localDemo')==='1'){document.getElementById('loginScreen').style.display='none';document.getElementById('appShell').style.display='block';document.getElementById('accountLabel').textContent='โหมดทดลอง';if(window.__setSyncStatus)window.__setSyncStatus('🧪 เครื่องนี้เท่านั้น','wait');return}document.getElementById('appShell').style.display='none';document.getElementById('loginScreen').style.display='flex';document.getElementById('accountLabel').textContent='เจ้าของร้าน';if(window.__setSyncStatus)window.__setSyncStatus('☁️ รอเข้าสู่ระบบ','wait');return}localStorage.removeItem(KEY+'_localDemo');document.getElementById('loginScreen').style.display='none';document.getElementById('appShell').style.display='block';document.getElementById('accountLabel').textContent=user.email||'บัญชีคลาวด์';if(window.__setSyncStatus)window.__setSyncStatus('☁️ เชื่อมต่อแล้ว','ok');render();toast('เข้าสู่ระบบสำเร็จ')}
+function applyRemoteState(remote){if(!remote||typeof remote!=='object')return;state=Object.assign(state,remote);if(!state.allocation)state.allocation={investment:0,personal:0};localStorage.setItem(KEY,JSON.stringify(state));render()}
+function getAppState(){return state}
+function logoutAccount(){if(window.cloudLogout)window.cloudLogout();else{document.getElementById('appShell').style.display='none';document.getElementById('loginScreen').style.display='flex'}}
+function openAllocationWindow(){const at=allocTotals();document.getElementById('allocationCash').textContent=baht(at.cash);document.getElementById('investmentAmount').value=+getAllocation().investment||0;document.getElementById('personalAmount').value=+getAllocation().personal||0;updateAllocationPreview();openWindow('allocationWindow')}
+function updateAllocationPreview(){const c=allocTotals().cash,inv=+document.getElementById('investmentAmount').value||0,per=+document.getElementById('personalAmount').value||0,rem=c-inv-per;document.getElementById('allocationInvestmentPreview').textContent=baht(inv);document.getElementById('allocationPersonalPreview').textContent=baht(per);document.getElementById('allocationUnallocatedPreview').textContent=baht(rem);document.getElementById('allocationError').textContent=rem<0?'จำนวนเงินรวมกันเกินเงินสดปัจจุบัน กรุณาลดจำนวนลง':' '}
+function confirmAllocation(){const inv=Math.max(0,+document.getElementById('investmentAmount').value||0),per=Math.max(0,+document.getElementById('personalAmount').value||0),c=allocTotals().cash;if(inv+per>c){document.getElementById('allocationError').textContent='จำนวนเงินรวมกันเกินเงินสดปัจจุบัน';return}state.allocation={investment:inv,personal:per};persist();render();closeWindow('allocationWindow');toast('ยืนยันการแบ่งเงินแล้ว')}
+
+async function resetPassword(){const email=document.getElementById('authEmail').value.trim();if(!email)return setStatus('กรุณากรอกอีเมลก่อน','error');if(!window.cloudResetPassword){setStatus('ยังไม่ได้ตั้งค่า Firebase สำหรับรีเซ็ตรหัสผ่าน','error');return}await window.cloudResetPassword(email)}
+function openFirebaseConfig(){const raw=localStorage.getItem(KEY+'_firebaseConfig');document.getElementById('firebaseConfigInput').value=raw?JSON.stringify(JSON.parse(raw),null,2):'';document.getElementById('firebaseConfigStatus').textContent=window.__firebaseConfigured?'✅ พบการตั้งค่า Firebase ในเครื่องแล้ว — แก้ไขได้':'ยังไม่ได้เชื่อม Firebase';document.getElementById('firebaseConfigStatus').className='login-status '+(window.__firebaseConfigured?'success':'config-warn');document.getElementById('firebaseConfigModal').classList.add('show')}
+function parseFirebaseConfigText(text){let t=(text||'').trim();const obj=t.match(/\{[\s\S]*\}/);if(obj)t=obj[0];try{return JSON.parse(t)}catch(_){const out={};const re=/(apiKey|authDomain|projectId|storageBucket|messagingSenderId|appId|measurementId)\s*:\s*[\"\']([^\"\']+)[\"\']/g;let m;while((m=re.exec(t)))out[m[1]]=m[2];return out}}
+function loadFirebaseConfigFile(e){const file=e.target.files&&e.target.files[0];if(!file)return;const r=new FileReader();r.onload=()=>{document.getElementById('firebaseConfigInput').value=r.result||''};r.readAsText(file)}
+function saveFirebaseConfig(){const text=document.getElementById('firebaseConfigInput').value;const cfg=parseFirebaseConfigText(text);const missing=FIREBASE_REQUIRED_KEYS.filter(k=>!cfg[k]);if(missing.length){document.getElementById('firebaseConfigStatus').textContent='❌ ข้อมูลไม่ครบ: '+missing.join(', ');document.getElementById('firebaseConfigStatus').className='login-status error';return}localStorage.setItem(KEY+'_firebaseConfig',JSON.stringify(cfg));document.getElementById('firebaseConfigStatus').textContent='✅ บันทึกแล้ว กำลังรีโหลดเพื่อเชื่อมต่อ Firebase...';document.getElementById('firebaseConfigStatus').className='login-status success';setTimeout(()=>location.reload(),500)}
+function clearAllData(){if(confirm('รีเซ็ตข้อมูลทั้งหมดและกลับไปข้อมูลตัวอย่างหรือไม่?')){localStorage.removeItem(KEY);location.reload()}}
+function scrollToTop(){window.scrollTo({top:0,behavior:'smooth'})}
+render();
+setInterval(()=>{if((state.periodMode||'auto')==='auto')applyPeriod()},60000);document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.window.show,.modal.show').forEach(x=>x.classList.remove('show'))});document.querySelectorAll('.window').forEach(w=>w.addEventListener('click',e=>{if(e.target===w)closeWindow(w.id)}));
+</script>
+
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";import{getAuth,onAuthStateChanged,signInWithEmailAndPassword,createUserWithEmailAndPassword,signOut,sendPasswordResetEmail}from"https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";import{getFirestore,doc,getDoc,setDoc,onSnapshot}from"https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+const REQUIRED_FIREBASE_KEYS=["apiKey","authDomain","projectId","messagingSenderId","appId"];const storedFirebaseConfig=JSON.parse(localStorage.getItem(KEY+"_firebaseConfig")||"null");const firebaseConfig=storedFirebaseConfig||{apiKey:"YOUR_API_KEY",authDomain:"YOUR_PROJECT.firebaseapp.com",projectId:"YOUR_PROJECT_ID",storageBucket:"YOUR_PROJECT.appspot.com",messagingSenderId:"YOUR_SENDER_ID",appId:"YOUR_APP_ID"};const configured=REQUIRED_FIREBASE_KEYS.every(k=>firebaseConfig[k]&&!String(firebaseConfig[k]).startsWith("YOUR_"));let auth=null,db=null,currentUser=null,unsubscribe=null;window.__firebaseConfigured=configured;
+function setStatus(msg='',type=''){const el=document.getElementById('authStatus');if(el){el.textContent=msg;el.className='login-status '+type}}function syncStatus(msg='☁️ รอเชื่อมต่อ',type='wait'){const el=document.getElementById('syncStatus');if(el){el.textContent=msg;el.className='sync-pill '+type}}window.__setSyncStatus=syncStatus;
+function sanitize(data){const copy=JSON.parse(JSON.stringify(data));if(copy.logo&&copy.logo.length>220000)copy.logo='';return copy}
+window.cloudLogin=async(email,password)=>{if(!configured){setStatus('ยังไม่ได้ตั้งค่า Firebase: กด “ตั้งค่าบัญชีออนไลน์ / Firebase” ก่อน','error');return}try{setStatus('กำลังเข้าสู่ระบบ...');await signInWithEmailAndPassword(auth,email,password)}catch(e){setStatus(firebaseError(e),'error')}};window.cloudRegister=async(email,password)=>{if(!configured){setStatus('ยังไม่ได้ตั้งค่า Firebase: กด “ตั้งค่าบัญชีออนไลน์ / Firebase” ก่อน','error');return}try{setStatus('กำลังสร้างบัญชี...');await createUserWithEmailAndPassword(auth,email,password)}catch(e){setStatus(firebaseError(e),'error')}};window.cloudResetPassword=async(email)=>{if(!configured){setStatus('ยังไม่ได้ตั้งค่า Firebase สำหรับรีเซ็ตรหัสผ่าน','error');return}try{setStatus('กำลังส่งลิงก์รีเซ็ตรหัสผ่าน...');await sendPasswordResetEmail(auth,email);setStatus('ส่งลิงก์รีเซ็ตรหัสผ่านไปที่อีเมลแล้ว','success')}catch(e){setStatus(firebaseError(e),'error')}};window.cloudLogout=async()=>{if(auth)await signOut(auth)};window.__cloudSave=async(state)=>{if(!db||!currentUser)return;try{syncStatus('☁️ กำลังซิงก์...','wait');await setDoc(doc(db,'users',currentUser.uid,'apps','businessFund'),sanitize(state));syncStatus('☁️ ซิงก์แล้ว','ok')}catch(e){syncStatus('⚠️ ซิงก์ไม่สำเร็จ','wait');console.error(e)}};
+function firebaseError(e){const m={'auth/invalid-credential':'อีเมลหรือรหัสผ่านไม่ถูกต้อง','auth/invalid-email':'รูปแบบอีเมลไม่ถูกต้อง','auth/email-already-in-use':'อีเมลนี้มีบัญชีอยู่แล้ว','auth/weak-password':'รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร','auth/too-many-requests':'ลองใหม่ภายหลัง ระบบจำกัดการเข้าสู่ระบบชั่วคราว','auth/network-request-failed':'เชื่อมต่ออินเทอร์เน็ตไม่สำเร็จ','auth/operation-not-allowed':'ยังไม่ได้เปิด Email/Password ใน Firebase Authentication','auth/missing-email':'กรุณากรอกอีเมล','permission-denied':'Firestore Rules ยังไม่อนุญาตให้บัญชีนี้อ่าน/เขียนข้อมูล'};return m[e?.code]||('เข้าสู่ระบบไม่สำเร็จ: '+(e?.message||'เกิดข้อผิดพลาด'))}
+async function init(){if(!configured){setStatus('ยังไม่เชื่อม Firebase — สามารถทดลองใช้ในเครื่องได้ หรือกดตั้งค่าบัญชีออนไลน์ด้านบน');syncStatus('🧪 ยังไม่เชื่อม Firebase','wait');return}try{const app=initializeApp(firebaseConfig);auth=getAuth(app);db=getFirestore(app);setStatus('ระบบบัญชีพร้อมใช้งาน กรุณาเข้าสู่ระบบ');onAuthStateChanged(auth,async user=>{currentUser=user;if(unsubscribe){unsubscribe();unsubscribe=null}if(!user){window.onCloudUser?.(null);return}const ref=doc(db,'users',user.uid,'apps','businessFund');try{const snap=await getDoc(ref);if(snap.exists())window.applyRemoteState?.(snap.data());else await setDoc(ref,sanitize(window.getAppState?.()||{}));unsubscribe=onSnapshot(ref,snap=>{if(snap.exists())window.applyRemoteState?.(snap.data())})}catch(e){setStatus('โหลดข้อมูลคลาวด์ไม่สำเร็จ','error')}window.onCloudUser?.(user)})}catch(e){setStatus('ตั้งค่า Firebase ยังไม่ถูกต้อง กรุณาตรวจสอบ config','error')}}init();
+</script>
+</body>
+</html>
